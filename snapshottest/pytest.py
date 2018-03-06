@@ -31,7 +31,12 @@ class PyTestSnapshotTest(SnapshotTest):
 
     @property
     def module(self):
-        return SnapshotModule.get_module_for_testpath(self.request.node.fspath.strpath)
+        module_path = self.request.node.fspath.strpath
+        if getattr(self.request.config.inicfg, 'config', False) and \
+           self.request.config.inicfg.config.sections.has_key('snapshottest') and \
+           self.request.config.inicfg.config.sections['snapshottest'].has_key('snapshot_parent_dir'):
+            module_path = self.request.config.inicfg.config.sections['snapshottest']['snapshot_parent_dir']
+        return SnapshotModule.get_module_for_testpath(module_path)
 
     @property
     def update(self):
